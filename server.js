@@ -2,13 +2,16 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const graphqlHttp= require('express-graphql')
 const { buildSchema } = require('graphql')
+const mongoose = require('mongoose')
+
+const Event = require('./models/event')
 
 
 const app = express()
 
 app.use(bodyParser.json())
 
-const events = []
+// const events = []
 
 const schema = buildSchema(`
   type Event {
@@ -44,21 +47,36 @@ app.use('/graphql', graphqlHttp({
   schema,
   rootValue:  {
     events: () => {
-      return events
+      return Event.find().then(events => events.map(event => {
+        return {...event._doc, _id: event._doc._id.toString()}
+      })).catch(err => {
+        throw err
+      })
     },
     createEvent: (args) => {
-      const event = {
-        _id: Math.random().toString(),
-        title: args.eventInput.title,
-        description: args.eventInput.description,
-        price: +args.eventInput.price,
-        date: new Date().toISOString()
-      }
-      events.push(event)
-      return event
+
+      //using the Mongoose model
+      const event = new Event ({
+          title: args.eventInput.title,
+          description: args.eventInput.description,
+          price: +args.eventInput.price,
+          date: new Date(args.eventInput.date)
+      })
+      return event.save().then(res => {
+        return {...res._doc, _id: result._doc._id.toString()}
+      }).catch(err => {
+        throw err
+      })
     }
   },
   graphiql: true
 }))
+mongoose.connect(
+  `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-0o2ie.mongodb.net/${process.env.MONGO_DB}?retryWrites=true`
+)
+.then(() => {
+  app.listen(3000)
+}).catch(err => {
 
-app.listen(3000)
+  console.log(err)
+})
