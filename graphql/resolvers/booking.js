@@ -7,7 +7,10 @@ const dateToString = date => new Date(date).toISOString()
 
 const bookingResolver =  {
 
-  bookings: async () => {
+  bookings: async (args,req) => {
+    if(!req.isAuth) {
+      throw new Error('Unauthenticated')
+    }
     try {
       const bookings = await Booking.find()
       return bookings.map(booking => {
@@ -18,16 +21,22 @@ const bookingResolver =  {
     }
   },
 
-  bookEvent: async (args) => {
+  bookEvent: async (args, req) => {
+    if(!req.isAuth) {
+      throw new Error('Unauthenticated')
+    }
     const bookedEvent = await Event.findOne({_id: args.eventId})
     const booking = new Booking({
-      user: "5c4dbde15862606942e6360a",
+      user: req.userId,
       event: bookedEvent
     })
     const result = await booking.save()
     return transformBooking(result)
   },
-  cancelBooking: async (args) => {
+  cancelBooking: async (args, req) => {
+    if(!req.isAuth) {
+      throw new Error('Unauthenticated')
+    }
     try {
       const cancelledBooking = await Booking.findOne({_id: args.bookingId}).populate('event')
       const cancelledEvent = transformEvent(cancelledBooking.event)
