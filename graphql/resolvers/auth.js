@@ -15,7 +15,7 @@ const userResolver =  {
         email: args.userInput.email,
         password: hashedPassword
       })
-      const result = await user.save()
+      const result = await createdUser.save()
       return {...result._doc, password: null, _id: result.id}
     } catch(err){
       throw err

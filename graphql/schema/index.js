@@ -36,7 +36,6 @@ const schema = buildSchema(`
   input UserInput {
     email: String!
     password: String!
-    creator: String!
   }
 
   type AuthData {

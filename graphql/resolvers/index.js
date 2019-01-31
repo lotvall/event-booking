@@ -8,8 +8,4 @@ const rootResolver = {
   ...bookingResolver,
 }
 
-console.log('root resolver: ', rootResolver)
-console.log('rootResolver.events', rootResolver.events)
-console.log('rootResolver.bookings', rootResolver.bookings)
-
 module.exports = rootResolver
