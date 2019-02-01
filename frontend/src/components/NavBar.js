@@ -20,12 +20,14 @@ const styles = {
     top: 0,
     width: '100%',
     height: '3.5rem',
-    background: '#1F1300',
-    padding: '0 1rem',
+    background: '#5101d1',
+    padding: '0 2rem',
     display: 'flex',
+    justifyContent: 'space-between',
+    boxSizing: 'border-box',
   },
   appTitle:{
-    color: '#FFC15E'
+    color: 'white'
   },
   ul: {  
     display: 'flex',
@@ -41,12 +43,17 @@ const styles = {
     },
     link: {
         textDecoration: 'none',
-        color: '#FFC15E',
+        color: 'white',
+        padding: '0.25rem 0.5rem',
         '&:hover': {
-            color: '#CC5803'
+            color: '#5101d1',
+            background: '#ffffff',
+            borderRadius: 5,
         },
         '&.active': {
-            color: '#CC5803'
+            color: '#5101d1',
+            background: '#ffffff',
+            borderRadius: 5,
         },
     }
 }

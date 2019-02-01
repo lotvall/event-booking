@@ -7,6 +7,7 @@ const styles = {
     width: '40rem',
     maxWidth: '80%',
     margin: '5rem auto',
+    
 
   },
   formcontrol: {
@@ -21,23 +22,24 @@ const styles = {
     width: '100%',
     display: 'block',
     height:'2rem',
-    fontSize: '100%'
+    fontSize: '100%',
+    background: 'white !important',
   },
   button: {
-    background: '#1F1300',
+    background: '#5101d1',
     font: 'inherit',
-    color: '#FFC15E',
-    border: '1px solid #1F1300',
+    color: 'white',
+    border: '1px solid #5101d1',
     borderRadius: 3,
     padding: '0.5rem 1rem',
     marginRight: '1rem',
     boxShadow:'1px 1px 5px rgba(0, 0, 0, 0.26)',
     cursor: 'pointer',
     '&:hover': {
-      color: '#CC5803'
+      color: '#6219d6'
     },
     '&.active': {
-      color: '#CC5803'
+      color: '#6219d6'
     },
 
 
