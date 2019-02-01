@@ -19,7 +19,10 @@ class App extends Component {
     })
   }
   logout = ( ) => {
-    
+    this.setState({
+      token: null,
+      userId: null,
+    })
   }
   
   render() {
@@ -31,6 +34,7 @@ class App extends Component {
             <main style={ { margin: '4rem 2.5rem' } }>
             <Switch>
               {!this.state.token && <Redirect from="/" to="/auth" exact/>}
+              {!this.state.token && <Redirect from="/bookings" to="/auth" exact/>}
               {this.state.token && <Redirect from="/" to="/events" exact/>}
               {this.state.token && <Redirect from="/auth" to="/events" exact/>}
 

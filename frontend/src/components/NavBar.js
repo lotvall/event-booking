@@ -33,7 +33,8 @@ const styles = {
     display: 'flex',
     listStyle: 'none',
     padding: 0,
-    margin: 0
+    margin: 0,
+    alignItems: 'center',
     },
     navigationItems: {
         marginLeft: '1.5rem'
@@ -43,8 +44,13 @@ const styles = {
     },
     link: {
         textDecoration: 'none',
+        background:'transparent',
         color: 'white',
         padding: '0.25rem 0.5rem',
+        border: 'none',
+        font: 'inherit',
+        cursor: 'pointer',
+        margin:0,
         '&:hover': {
             color: '#5101d1',
             background: '#ffffff',
@@ -79,10 +85,11 @@ function SimpleAppBar(props) {
                 <li className={classes.li}>
                 <NavLink to="/events" className={classes.link}>Events</NavLink>
                 </li>
-                {context.token && <li className={classes.li}>
+                {context.token && <><li className={classes.li}>
                 <NavLink to="/bookings" className={classes.link}>Bookings</NavLink>
-                </li>}
-                {context.token && <button>Logout</button> }
+                </li>
+                <li className={classes.li}><button className={classes.link} onClick={context.logout}>Logout</button></li></>
+                }
             </ul>
         </nav>
         </Toolbar>
