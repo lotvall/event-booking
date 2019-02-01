@@ -18,7 +18,9 @@ const styles = {
   },
   input: {
     width: '100%',
-    display: 'block'
+    display: 'block',
+    height:'2rem',
+    fontSize: '100%'
   },
   button: {
     background: '#1F1300',
@@ -56,22 +58,17 @@ class AuthComponent extends Component {
       isLoginMode: !prevState.isLoginMode
     }))
   }
-  handleSubmit = (event) => {
+  
+  handleSubmit = async (event) => {
     event.preventDefault()
-
-    this.state.isLoginMode ? this.handleLoginUser(event) : this.handleCreateUser(event)
-
-  }
-  handleLoginUser = async (event) => {
-    console.log('handle login user was called', event)
     const email = this.emailEl.current.value
     const password = this.passwordEl.current.value
 
     if(email.trim().length===0 || password.trim().length===0) {
       return
     }
-
-    const request = {
+    const request = this.state.isLoginMode ?
+    {
       query: ` 
         query {
           login(email:"${email}", password:"${password}") {
@@ -82,35 +79,8 @@ class AuthComponent extends Component {
         }
       `
     }
-    try {
-      const res = await fetch('http://localhost:8000/graphql', {
-        method: 'POST',
-        body: JSON.stringify(request),
-        headers: {
-          'Content-Type': 'application/json' 
-        }
-      })
-      if(res.status !== 200 && res.status !== 201) {
-        throw new Error ('Failed')
-      }
-      const data = await res.json()
-      console.log(data)
-    } catch(err) {
-      console.log(err)
-      throw err
-    }
-  
-
-  }
-  handleCreateUser = async (event) => {
-    console.log('handle create user was called')
-    const email = this.emailEl.current.value
-    const password = this.passwordEl.current.value
-
-    if(email.trim().length===0 || password.trim().length===0) {
-      return
-    }
-    const request = {
+    :
+    {
       query: ` 
         mutation {
           createUser(userInput: {email:"${email}", password:"${password}"}) {
