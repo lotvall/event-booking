@@ -1,15 +1,20 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Modal from '../components/Modal'
 import Backdrop from '../components/Backdrop';
+import EventItem from '../components/EventItem'
+import AuthContext from '../context/AuthContext';
+
+// import gql from 'graphql-tag'
+// import { Query } from 'react-apollo'
 
 const styles= {
   events: {
     textAlign:'center',
     border:'1px solid #5101d1',
-    padding: '2rem',
-    margin: '2rem auto',
-    marginTop: '6rem',
+    padding: '2rem 0rem',
+    margin: '1rem auto',
+    marginTop: '1rem',
     width:'30rem',
     maxWidth:'80%',
   },
@@ -30,10 +35,44 @@ const styles= {
     },
   }
 }
+
+// const EVENTS_QUERY = gql`
+//   query EventsQuery {
+//     events {
+//       _id
+//       title
+//       description
+//       date
+//       price
+//       creator {
+//         email
+//         _id
+//       }
+//     }
+//   }
+// `
+
 class EventsComponent extends Component { 
   state = {
     creating:false,
+    events: []
   }
+
+  static contextType = AuthContext
+  constructor(props) {
+    super(props)
+    this.titleEl = React.createRef()
+    this.priceEl = React.createRef()
+    this.dateEl = React.createRef()
+    this.descriptionEl = React.createRef()
+
+  }
+
+   componentDidMount() {
+    this.getAllEvents()
+
+  }
+
   openCreateEvent = () => {
     this.setState({
       creating:true,
@@ -44,7 +83,110 @@ class EventsComponent extends Component {
       creating:false,
     })
   }
-  submitCreateEvent = () => {
+  getAllEvents = async () => {
+    const request = {
+      query: ` 
+        query {
+          events{
+            _id
+            title
+            description
+            date
+            price
+            creator {
+              email
+              _id
+            }
+          }
+        }
+      `
+    }
+
+    try {
+      const res = await fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        body: JSON.stringify(request),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      if(res.status !== 200 && res.status !== 201) {
+        throw new Error ('Failed')
+      }
+      const data = await res.json()
+
+      const events = data.data.events
+      this.setState({
+        events
+      })
+
+      console.log(this.state.events)
+    } catch(err) {
+      console.log(err)
+      throw err
+    }
+
+  }
+  submitCreateEvent = async () => {
+
+    const title = this.titleEl.current.value
+    const price = +this.priceEl.current.value
+    const date = this.dateEl.current.value
+    const description = this.descriptionEl.current.value
+
+        // add if statement to check if l > 0 for all variables
+
+    const createdEvent ={
+      title,
+      price,
+      date,
+      description
+    }
+
+
+    console.log(createdEvent)
+
+    const request = 
+    {
+      query: ` 
+        mutation {
+          createEvent(eventInput: {title: "${title}", description: "${description}", price: ${price}, date: "${date}"}) {
+            _id
+            title
+            description
+            date
+            price
+            creator {
+              email
+              _id
+            }
+          }
+        }
+      `
+    }
+    console.log(request.query)
+
+    const token = this.context.token
+    try {
+      const res = await fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        body: JSON.stringify(request),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        }
+      })
+      if(res.status !== 200 && res.status !== 201) {
+        throw new Error ('Failed')
+      }
+      const data = await res.json()
+
+      console.log(data)
+    } catch(err) {
+      console.log(err)
+      throw err
+    }
+
     this.setState({
       creating:false,
     })
@@ -53,15 +195,26 @@ class EventsComponent extends Component {
     const { classes } = this.props;
     return (
       <>
-        {this.state.creating && <Backdrop />}
-        {this.state.creating && (
-          <Modal title="Add Event" canCancel canCreate onCancel={this.cancelCreateEvent} onSubmit={this.submitCreateEvent}>
-            <p>The modal</p>
-          </Modal>
-        )}
-      <div className={classes.events}>
-        <button className={classes.button} onClick={this.openCreateEvent}>Create Event</button>
-      </div>
+        {
+          this.state.creating && <Backdrop />
+        } 
+        {
+          this.state.creating && (
+            <Modal title="Add Event" titleEl={this.titleEl} priceEl={this.priceEl} dateEl={this.dateEl} descriptionEl={this.descriptionEl} canCancel canCreate onCancel={this.cancelCreateEvent} onSubmit={this.submitCreateEvent} />
+          )
+        }
+      {
+        this.context.token && 
+        <div className={classes.events}>
+          <button className={classes.button} onClick={this.openCreateEvent}>Create Event</button>
+        </div>
+      }
+      {
+        this.state.events.map(event => {
+          return <EventItem key={event._id} title={event.title} price={event.price} date={event.date} description={event.description }/>
+        })
+      }
+
 
       </>
     )

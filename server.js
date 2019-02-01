@@ -7,8 +7,11 @@ const mongoose = require('mongoose')
 const isAuth = require('./middleware/isAuth')
 const graphQlSchema = require('./graphql/schema/index')
 const graphQlResolvers = require('./graphql/resolvers/index')
+// const cors = require('cors')
 
 const app = express()
+
+// app.use(cors())
 
 app.use(bodyParser.json())
 
