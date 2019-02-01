@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import AuthContext from '../context/AuthContext'
 
 const styles = {
   authform: {
@@ -48,6 +49,9 @@ class AuthComponent extends Component {
   state= {
     isLoginMode: false
   }
+
+  static contextType = AuthContext
+
   constructor(props) {
     super(props)
     this.emailEl = React.createRef()
@@ -102,6 +106,10 @@ class AuthComponent extends Component {
         throw new Error ('Failed')
       }
       const data = await res.json()
+
+      if (data.data.login.token) {
+        this.context.login(data.data.login.token, data.data.login.userId, data.data.login.tokenExpiration)
+      }
       console.log(data)
     } catch(err) {
       console.log(err)

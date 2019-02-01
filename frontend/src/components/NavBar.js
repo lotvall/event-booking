@@ -6,6 +6,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { NavLink } from 'react-router-dom';
 
+import AuthContext from '../context/AuthContext'
+
 
 const styles = {
   root: {
@@ -53,7 +55,10 @@ function SimpleAppBar(props) {
   const { classes } = props;
 
   return (
-    <div className={classes.root}>
+    <AuthContext.Consumer>
+    {(context) => {
+      return (
+        <div className={classes.root}>
       <AppBar position="static" color="default">
         <Toolbar className={classes.toolbar}>
           <Typography variant="h6" className={classes.appTitle}>
@@ -61,20 +66,25 @@ function SimpleAppBar(props) {
           </Typography>
           <nav className={classes.navigationItems}>
             <ul className={classes.ul}>
-                <li className={classes.li}>
+                {!context.token && <li className={classes.li}>
                 <NavLink to="/auth" className={classes.link}>Authenticate</NavLink>
-                </li>
+                </li>}
                 <li className={classes.li}>
                 <NavLink to="/events" className={classes.link}>Events</NavLink>
                 </li>
-                <li className={classes.li}>
+                {context.token && <li className={classes.li}>
                 <NavLink to="/bookings" className={classes.link}>Bookings</NavLink>
-                </li>
+                </li>}
+                {context.token && <button>Logout</button> }
             </ul>
         </nav>
         </Toolbar>
       </AppBar>
     </div>
+      )
+    }}
+    
+    </AuthContext.Consumer>
   );
 }
 
