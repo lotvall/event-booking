@@ -6,18 +6,6 @@ import BookingsComponent from './pages/Bookings'
 import NavBar from './components/NavBar'
 import AuthContext from './context/AuthContext'
 
-// import ApolloClient from 'apollo-client';
-// import { ApolloProvider } from 'react-apollo'
-// import { HttpLink } from 'apollo-link-http';
-// import { InMemoryCache } from "apollo-cache-inmemory";
-
-
-
-// const client = new ApolloClient({
-//   link: new HttpLink({ uri: 'https://localhost:8000/graphql' }),
-//   cache: new InMemoryCache()
-// })
-
 class App extends Component {
 
   state = {
@@ -39,7 +27,6 @@ class App extends Component {
   
   render() {
     return (
-      // <ApolloProvider client={client}>
         <BrowserRouter>
           <>
             <AuthContext.Provider value={{token: this.state.token, userId: this.state.userId, login: this.login, logout: this.logout}}>
@@ -60,7 +47,6 @@ class App extends Component {
             </AuthContext.Provider>
           </>
         </BrowserRouter>
-      // </ApolloProvider>
     );
   }
 }

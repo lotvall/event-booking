@@ -4,9 +4,12 @@ import Modal from '../components/Modal'
 import Backdrop from '../components/Backdrop';
 import EventItem from '../components/EventItem'
 import AuthContext from '../context/AuthContext';
+import { RetryLink } from "apollo-link-retry";
+
 
 // import gql from 'graphql-tag'
 // import { Query } from 'react-apollo'
+const link = new RetryLink();
 
 const styles= {
   events: {
@@ -181,15 +184,19 @@ class EventsComponent extends Component {
       }
       const data = await res.json()
 
-      console.log(data)
+      const createdEvent = data.data.creatEvent
+
+      this.setState((prevState) => ({
+        creating:false
+      }))
+
+      this.getAllEvents()
     } catch(err) {
       console.log(err)
       throw err
     }
 
-    this.setState({
-      creating:false,
-    })
+    
   }
   render() {
     const { classes } = this.props;
@@ -211,7 +218,13 @@ class EventsComponent extends Component {
       }
       {
         this.state.events.map(event => {
-          return <EventItem key={event._id} title={event.title} price={event.price} date={event.date} description={event.description }/>
+          return <EventItem key={event._id} 
+            title={event.title} 
+            price={event.price} 
+            date={event.date} 
+            description={event.description } 
+            token={Boolean(this.context.token)}
+          />
         })
       }
 

@@ -8,7 +8,6 @@ const styles = {
     maxWidth: '80%',
     margin: '5rem auto',
     
-
   },
   formcontrol: {
     marginBottom: '1rem'
@@ -109,7 +108,10 @@ class AuthComponent extends Component {
       }
       const data = await res.json()
 
-      if (data.data.login.token) {
+
+      console.log(data)
+
+      if (data.data.login) {
         this.context.login(data.data.login.token, data.data.login.userId, data.data.login.tokenExpiration)
       }
       console.log(data)
