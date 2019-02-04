@@ -6,5 +6,5 @@ const Spinner = () => (
     style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <div className="lds-dual-ring"></div>
 </div>)
-
+    
 export default Spinner

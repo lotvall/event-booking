@@ -38,26 +38,12 @@ const styles= {
   }
 }
 
-// const EVENTS_QUERY = gql`
-//   query EventsQuery {
-//     events {
-//       _id
-//       title
-//       description
-//       date
-//       price
-//       creator {
-//         email
-//         _id
-//       }
-//     }
-//   }
-// `
-
 class EventsComponent extends Component { 
   state = {
     creating:false,
+    selectedEvent: null,
     events: [],
+    bookedEvents: [],
     isLoading: false
   }
 
@@ -71,10 +57,87 @@ class EventsComponent extends Component {
 
   }
 
-   componentDidMount() {
+
+  componentDidMount() {
     this.getAllEvents()
   }
 
+  handleDeselectEvent = ( )=> {
+    this.setState({
+      selectedEvent: null
+    })
+    console.log('handledeselectevent')
+  }
+
+  handleBookEvent = async (eventId) => {
+    const userId = this.context.userId
+    console.log('userId', userId)
+    console.log('eventid', eventId)
+
+    const createdBooking ={
+      eventId,
+      userId
+    }
+    console.log(createdBooking)
+    const request = 
+    {
+      query: ` 
+        mutation {
+          bookEvent(eventId: "${eventId}") {
+            _id
+            user {
+              _id
+              email
+            }
+            event{
+              _id
+              title
+              date
+            }
+            createdAt
+          }
+        }
+      `
+    }
+    const token = this.context.token
+    try {
+      const res = await fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        body: JSON.stringify(request),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+
+        }
+      })
+      console.log('res of the fetch', res)
+
+      if(res.status !== 200 && res.status !== 201) {
+        throw new Error ('Failed')
+      }
+      const data = await res.json()
+
+      console.log('jsonized data', data)
+    } catch(error) {
+      console.log(error)
+      throw error
+    }
+  }
+
+
+
+  handleViewDetail = (eventId) => {
+    this.setState(prevState => {
+      const selectedEvent = prevState.events.find(event => {
+
+        return event._id === eventId
+      })
+      console.log(selectedEvent)
+      return {
+        selectedEvent
+      }
+    })
+  }
   openCreateEvent = () => {
     this.setState({
       creating:true,
@@ -121,13 +184,11 @@ class EventsComponent extends Component {
       const data = await res.json()
 
       const events = data.data.events
-      console.log(this.state)
       this.setState({
         events,
         isLoading:false
       })
 
-      console.log(this.state.events)
     } catch(err) {
       console.log(err)
       this.setState({
@@ -153,9 +214,6 @@ class EventsComponent extends Component {
       description
     }
 
-
-    console.log(createdEvent)
-
     const request = 
     {
       query: ` 
@@ -174,7 +232,6 @@ class EventsComponent extends Component {
         }
       `
     }
-    console.log(request.query)
 
     const token = this.context.token
     try {
@@ -190,7 +247,6 @@ class EventsComponent extends Component {
         throw new Error ('Failed')
       }
       const data = await res.json()
-      console.log(data.data)
 
       const createdEvent = data.data.createEvent
 
@@ -208,14 +264,27 @@ class EventsComponent extends Component {
   }
   render() {
     const { classes } = this.props;
+
     return (
       <>
         {
-          this.state.creating && <Backdrop />
+          this.state.creating || this.state.selectedEvent && <Backdrop />
         } 
         {
           this.state.creating && (
-            <Modal title="Add Event" titleEl={this.titleEl} priceEl={this.priceEl} dateEl={this.dateEl} descriptionEl={this.descriptionEl} canCancel canCreate onCancel={this.cancelCreateEvent} onSubmit={this.submitCreateEvent} />
+            <Modal 
+            title="Add Event" titleEl={this.titleEl} priceEl={this.priceEl} dateEl={this.dateEl} descriptionEl={this.descriptionEl} canCancel canCreate onCancel={this.cancelCreateEvent} onSubmit={this.submitCreateEvent} 
+              
+            />
+          )
+        }
+        {
+          this.state.selectedEvent && (
+            <Modal 
+              selectedEvent={this.state.selectedEvent}
+              onDeselectEvent={this.handleDeselectEvent}
+              onBookEvent={this.handleBookEvent}
+            />
           )
         }
       {
@@ -229,7 +298,9 @@ class EventsComponent extends Component {
         <Spinner />
         :
         this.state.events.map(event => {
-          return  <EventItem key={event._id} 
+          return  <EventItem 
+            key={event._id}
+            eventId={event._id}
             title={event.title} 
             price={event.price} 
             date={event.date} 
@@ -237,6 +308,8 @@ class EventsComponent extends Component {
             userId = {this.context.userId}
             creatorId = {event.creator._id}
             token={Boolean(this.context.token)}
+            onViewDetails={this.handleViewDetail}
+            
           />
         })
       }

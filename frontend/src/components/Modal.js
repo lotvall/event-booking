@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import Moment from 'react-moment'
+
 
 const styles = theme => ({
     modal: {
@@ -72,11 +74,23 @@ const styles = theme => ({
       
 
 })
-const modal = ({classes, title, canCancel, canCreate, onCancel, onSubmit, titleEl, priceEl, dateEl, descriptionEl}) => (
+const modal = ({classes, title, canCancel, canCreate, onCancel, onSubmit, titleEl, priceEl, dateEl, descriptionEl, selectedEvent, onBookEvent, onDeselectEvent}) => (
     <div className={classes.modal}>
-        <header className={classes.modalheader}>{title}</header>
+        <header className={classes.modalheader}>{selectedEvent ? selectedEvent.title : title}</header>
         <section className={classes.modalcontent}>
+            { selectedEvent ?
+            <div className={classes.modalform}>
+                <div className={classes.formcontrol}>
 
+                
+                    <h4 className={classes.label}>${selectedEvent.price}</h4>
+                    <h4 className={classes.label}><Moment format="YYYY-MM-DD HH:mm">{selectedEvent.date}</Moment></h4>
+                    <h6 className={classes.label}>{selectedEvent.description}</h6>
+
+
+                </div>
+            </div>
+            : 
             <form className={classes.modalform}>
                 <div className={classes.formcontrol}>
                     <label htmlFor="title" className={classes.label}>Title</label>
@@ -95,11 +109,11 @@ const modal = ({classes, title, canCancel, canCreate, onCancel, onSubmit, titleE
                     <textarea className={classes.input} id="description" rows="3" ref={descriptionEl}></textarea>
                 </div>
             </form>
-
+            }
         </section>
         <section className={classes.modalactions}>
-            {canCancel && <button className={classes.button} onClick={onCancel}>Cancel</button>}
-            {canCreate && <button className={classes.button} onClick={onSubmit}>Create Event</button>}
+            { selectedEvent ? <button className={classes.button} onClick={onDeselectEvent}>Cancel</button> : <button className={classes.button} onClick={onCancel}>Cancel</button>}
+            { selectedEvent ? <button className={classes.button} onClick={onBookEvent.bind(this, selectedEvent._id)}>Book Event</button> : <button className={classes.button} onClick={onSubmit}>Create Event</button>}
         </section>
     </div>
 )
