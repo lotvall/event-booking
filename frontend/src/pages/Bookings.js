@@ -1,7 +1,22 @@
 import React, { Component } from 'react';
 import Spinner from '../components/Spinner'
+import BookingItem from '../components/BookingItem'
+import AuthContext from '../context/AuthContext';
+
 
 class BookingsComponent extends Component {
+
+  state = {
+    bookedEvents: [],
+    isLoading: false
+  }
+  static contextType = AuthContext
+
+
+  componentDidMount() {
+    this.getAllBookings()
+  }
+
   getAllBookings = async () => {
     this.setState({
       isLoading: true
@@ -9,21 +24,24 @@ class BookingsComponent extends Component {
     const request = {
       query: ` 
         query {
-          events{
+          bookings{
             _id
-            title
-            description
-            date
-            price
-            creator {
+            user {
               email
-              _id
             }
+            event {
+              title
+              date
+            }
+            createdAt
+            updatedAt
+
           }
         }
       `
     }
     const token = this.context.token
+    console.log('token works', token)
 
     try {
       const res = await fetch('http://localhost:8000/graphql', {
@@ -39,10 +57,10 @@ class BookingsComponent extends Component {
         throw new Error ('Failed')
       }
       const data = await res.json()
-
-      const bookings = data.data.bookings
+      const bookedEvents = data.data.bookings
+      console.log('bookedEvents', bookedEvents)
       this.setState({
-        bookings,
+        bookedEvents,
         isLoading:false
       })
 
@@ -64,20 +82,9 @@ class BookingsComponent extends Component {
         this.state.isLoading ?
         <Spinner />
         :
-        this.state.bookings.map(event => {
-          return  <BookingItem 
-            key={event._id}
-            eventId={event._id}
-            title={event.title} 
-            price={event.price} 
-            date={event.date} 
-            description={event.description } 
-            userId = {this.context.userId}
-            creatorId = {event.creator._id}
-            token={Boolean(this.context.token)}
-            onCancelBooking={this.CancelBooking}
-            
-          />
+        this.state.bookedEvents.map(event => {
+          console.log(event)
+          return <p>a booking item</p>//<BookingItem />
         })
       }
       </>
