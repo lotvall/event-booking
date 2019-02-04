@@ -14,51 +14,55 @@ const style = theme => ({
     margin: '1rem auto',
     width:'30rem',
     maxWidth:'80%',
+  },
+   eventheader: {
+      padding: '1rem',
+      background: '#5101d1',
+      color: 'white',
+      fontSize: '1.25rem',
+  },
+  button: {
+    background: '#5101d1',
+    width:'20%',
+    font: 'inherit',
+    color: 'white',
+    border: '1px solid #5101d1',
+    borderRadius: 3,
+    padding: '0.5rem 1rem',
+    boxShadow:'1px 1px 5px rgba(0, 0, 0, 0.26)',
+    cursor: 'pointer',
+    marginBottom:'1rem',
+    '&:hover': {
+      color: '#6219d6'
     },
-    eventheader: {
-        padding: '1rem',
-        background: '#5101d1',
-        color: 'white',
-        fontSize: '1.25rem',
+    '&.active': {
+        color: '#6219d6'
     },
-    button: {
-        background: '#5101d1',
-        width:'20%',
-        font: 'inherit',
-        color: 'white',
-        border: '1px solid #5101d1',
-        borderRadius: 3,
-        padding: '0.5rem 1rem',
-        marginRight:'1rem',
-        boxShadow:'1px 1px 5px rgba(0, 0, 0, 0.26)',
-        cursor: 'pointer',
-        marginBottom:'1rem',
-        '&:hover': {
-          color: '#6219d6'
-        },
-        '&.active': {
-          color: '#6219d6'
-        },
-
-      },
+  },
+  eventactionparagraph: {
+    marginTop:0,
+  },
 
 })
 
-const EventItem = ({classes, _id, title, price, date, description, token}) => {
+const EventItem = ({classes, _id, title, price, date, description, token, creatorId, userId}) => {
+
 
   return (
     <div className={classes.eventitems}>
-    <div className="row">
-      <div className="col-md-9">
-        <header className={classes.eventheader}>{title}</header>
-        <p>Date: <Moment format="YYYY-MM-DD HH:mm">{date}</Moment></p>
-        <p>Price: ${price}</p>
-        <p>{description}</p>
+    <header className={classes.eventheader}>{title}</header>
+    <div className={classes.row}>
+      <div className={classes.eventitemcontent}>
+        <p>${price}</p>
+        <p><Moment format="YYYY-MM-DD HH:mm">{date}</Moment></p>
       </div>
       <div className="col-md-3">
       {
         token && <section className={classes.eventactions}>
-          <button className={classes.button} >Book</button>
+          {
+            creatorId === userId ? <p className={classes.eventactionparagraph}> You're the creator of this event</p> :           <button className={classes.button} style={{}}>View Details</button>
+
+          }
         </section>
       }
       </div>

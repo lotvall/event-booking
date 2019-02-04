@@ -4,12 +4,11 @@ import Modal from '../components/Modal'
 import Backdrop from '../components/Backdrop';
 import EventItem from '../components/EventItem'
 import AuthContext from '../context/AuthContext';
-import { RetryLink } from "apollo-link-retry";
+import Spinner from '../components/Spinner'
 
 
 // import gql from 'graphql-tag'
 // import { Query } from 'react-apollo'
-const link = new RetryLink();
 
 const styles= {
   events: {
@@ -58,7 +57,8 @@ const styles= {
 class EventsComponent extends Component { 
   state = {
     creating:false,
-    events: []
+    events: [],
+    isLoading: false
   }
 
   static contextType = AuthContext
@@ -73,7 +73,6 @@ class EventsComponent extends Component {
 
    componentDidMount() {
     this.getAllEvents()
-
   }
 
   openCreateEvent = () => {
@@ -87,6 +86,9 @@ class EventsComponent extends Component {
     })
   }
   getAllEvents = async () => {
+    this.setState({
+      isLoading: true
+    })
     const request = {
       query: ` 
         query {
@@ -119,13 +121,18 @@ class EventsComponent extends Component {
       const data = await res.json()
 
       const events = data.data.events
+      console.log(this.state)
       this.setState({
-        events
+        events,
+        isLoading:false
       })
 
       console.log(this.state.events)
     } catch(err) {
       console.log(err)
+      this.setState({
+        isLoading:false
+      })
       throw err
     }
 
@@ -183,14 +190,15 @@ class EventsComponent extends Component {
         throw new Error ('Failed')
       }
       const data = await res.json()
+      console.log(data.data)
 
-      const createdEvent = data.data.creatEvent
+      const createdEvent = data.data.createEvent
 
       this.setState((prevState) => ({
-        creating:false
+        creating:false,
+        events: [...prevState.events, createdEvent]
       }))
 
-      this.getAllEvents()
     } catch(err) {
       console.log(err)
       throw err
@@ -217,12 +225,17 @@ class EventsComponent extends Component {
         </div>
       }
       {
+        this.state.isLoading ?
+        <Spinner />
+        :
         this.state.events.map(event => {
-          return <EventItem key={event._id} 
+          return  <EventItem key={event._id} 
             title={event.title} 
             price={event.price} 
             date={event.date} 
             description={event.description } 
+            userId = {this.context.userId}
+            creatorId = {event.creator._id}
             token={Boolean(this.context.token)}
           />
         })
