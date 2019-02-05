@@ -11,6 +11,8 @@ const bookingResolver =  {
     if(!req.isAuth) {
       throw new Error('Unauthenticated')
     }
+    console.log('args', args)
+
     try {
       const bookings = await Booking.find()
       return bookings.map(booking => {
@@ -26,10 +28,22 @@ const bookingResolver =  {
       throw new Error('Unauthenticated')
     }
     const bookedEvent = await Event.findOne({_id: args.eventId})
+    
     const booking = new Booking({
       user: req.userId,
       event: bookedEvent
     })
+
+    const alreadyBooked = await Booking.findOne({
+      event:booking.event._id,
+      user:booking.user._id
+    })
+    console.log('alreadybooked', alreadyBooked)
+
+    if (alreadyBooked) {
+      throw new Error ('Event already booked')
+    }
+
     const result = await booking.save()
     return transformBooking(result)
   },

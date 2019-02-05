@@ -6,10 +6,6 @@ import EventItem from '../components/EventItem'
 import AuthContext from '../context/AuthContext';
 import Spinner from '../components/Spinner'
 
-
-// import gql from 'graphql-tag'
-// import { Query } from 'react-apollo'
-
 const styles= {
   events: {
     textAlign:'center',

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Spinner from '../components/Spinner'
-import BookingItem from '../components/BookingItem'
+import EventItem from '../components/EventItem'
 import AuthContext from '../context/AuthContext';
 
 
@@ -32,6 +32,7 @@ class BookingsComponent extends Component {
             event {
               title
               date
+              price
             }
             createdAt
             updatedAt
@@ -76,15 +77,13 @@ class BookingsComponent extends Component {
   render() {
     return (
       <>
-      <h1>The BookingsComponent</h1>
-
       {
         this.state.isLoading ?
         <Spinner />
         :
-        this.state.bookedEvents.map(event => {
-          console.log(event)
-          return <p>a booking item</p>//<BookingItem />
+        this.state.bookedEvents.map(bookedEvent => {
+          console.log(bookedEvent)
+          return <EventItem key={bookedEvent._id} title={bookedEvent.event.title} price={bookedEvent.event.price} />
         })
       }
       </>
