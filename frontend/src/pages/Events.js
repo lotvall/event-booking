@@ -81,16 +81,8 @@ class EventsComponent extends Component {
         mutation {
           bookEvent(eventId: "${eventId}") {
             _id
-            user {
-              _id
-              email
-            }
-            event{
-              _id
-              title
-              date
-            }
             createdAt
+            updatedAt
           }
         }
       `

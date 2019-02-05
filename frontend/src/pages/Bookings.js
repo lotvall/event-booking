@@ -16,6 +16,54 @@ class BookingsComponent extends Component {
   componentDidMount() {
     this.getAllBookings()
   }
+  handleCancelBooking = async (bookingId) => {
+    console.log('cancel booking called')
+    console.log('bookingid', bookingId)
+    console.log('another handle booking log')
+
+
+    const request = {
+      query: ` 
+        mutation {
+          cancelBooking(bookingId: "${bookingId}"){
+            _id
+            title
+            date
+          }
+        }
+      `
+    }
+    const token = this.context.token
+    
+    try {
+      const res = await fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        body: JSON.stringify(request),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+
+        }
+      })
+      console.log('res of the fetch', res)
+
+      if(res.status !== 200 && res.status !== 201) {
+        throw new Error ('Failed')
+      }
+      const data = await res.json()
+
+      console.log('jsonized data', data)
+      this.setState(prevState => ({
+        bookedEvents: prevState.bookedEvents.filter(booking => booking._id !== bookingId)
+      }))
+
+    }catch(error) {
+      console.log(error)
+      throw(error)
+    }
+
+    return
+  }
 
   getAllBookings = async () => {
     this.setState({
@@ -83,7 +131,7 @@ class BookingsComponent extends Component {
         :
         this.state.bookedEvents.map(bookedEvent => {
           console.log(bookedEvent)
-          return <EventItem key={bookedEvent._id} title={bookedEvent.event.title} price={bookedEvent.event.price} />
+          return <EventItem key={bookedEvent._id} token={Boolean(this.context.token)} title={bookedEvent.event.title} price={bookedEvent.event.price} bookingId={bookedEvent._id} onCancelBooking={this.handleCancelBooking}/>
         })
       }
       </>

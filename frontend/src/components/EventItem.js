@@ -45,7 +45,7 @@ const style = theme => ({
 
 })
 
-const EventItem = ({classes, eventId, title, price, date, description, token, creatorId, userId, onViewDetails}) => {
+const EventItem = ({classes, eventId, title, price, date, description, token, creatorId, userId, onViewDetails, onCancelBooking, bookingId}) => {
 
   return (
     <div className={classes.eventitems}>
@@ -62,8 +62,12 @@ const EventItem = ({classes, eventId, title, price, date, description, token, cr
             creatorId === userId ? <p className={classes.eventactionparagraph}> You're the creator of this event</p> 
             :
             <button className={classes.button} style={{}} onClick={onViewDetails.bind(this, eventId)}>View Details</button>
+          }
+          {
+            bookingId && <button className={classes.button} style={{}} onClick={onCancelBooking.bind(this, bookingId)}>Cancel Booking</button>
 
           }
+          
         </section>
       }
       </div>
