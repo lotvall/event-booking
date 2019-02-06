@@ -108,13 +108,9 @@ class AuthComponent extends Component {
       }
       const data = await res.json()
 
-
-      console.log(data)
-
       if (data.data.login) {
         this.context.login(data.data.login.token, data.data.login.userId, data.data.login.tokenExpiration)
       }
-      console.log(data)
     } catch(err) {
       console.log(err)
       throw err

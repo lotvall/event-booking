@@ -8,7 +8,6 @@ const eventLoader = new DataLoader((eventIds)=> {
 })
 
 const userLoader = new DataLoader((userIds)=> {
-  console.log(userIds)
   return User.find({_id: {$in: userIds}})
 })
 

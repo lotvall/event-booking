@@ -62,19 +62,15 @@ class EventsComponent extends Component {
     this.setState({
       selectedEvent: null
     })
-    console.log('handledeselectevent')
   }
 
   handleBookEvent = async (eventId) => {
     const userId = this.context.userId
-    console.log('userId', userId)
-    console.log('eventid', eventId)
 
     const createdBooking ={
       eventId,
       userId
     }
-    console.log(createdBooking)
     const request = 
     {
       query: ` 
@@ -97,7 +93,6 @@ class EventsComponent extends Component {
 
         }
       })
-      console.log('res of the fetch', res)
 
       if(res.status !== 200 && res.status !== 201) {
         throw new Error ('Failed')
@@ -108,7 +103,6 @@ class EventsComponent extends Component {
         selectedEvent: null
       })
 
-      console.log('jsonized data', data)
     } catch(error) {
       console.log(error)
       throw error
@@ -123,7 +117,6 @@ class EventsComponent extends Component {
 
         return event._id === eventId
       })
-      console.log(selectedEvent)
       return {
         selectedEvent
       }

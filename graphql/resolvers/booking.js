@@ -11,7 +11,6 @@ const bookingResolver =  {
     if(!req.isAuth) {
       throw new Error('Unauthenticated')
     }
-    console.log('args', args)
 
     try {
       const bookings = await Booking.find({user: req.userId})
@@ -38,7 +37,6 @@ const bookingResolver =  {
       event:booking.event._id,
       user:booking.user._id
     })
-    console.log('alreadybooked', alreadyBooked)
 
     if (alreadyBooked) {
       throw new Error ('Event already booked')
