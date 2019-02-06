@@ -82,7 +82,6 @@ class EventsComponent extends Component {
           bookEvent(eventId: "${eventId}") {
             _id
             createdAt
-            updatedAt
           }
         }
       `
@@ -104,6 +103,10 @@ class EventsComponent extends Component {
         throw new Error ('Failed')
       }
       const data = await res.json()
+
+      this.setState({
+        selectedEvent: null
+      })
 
       console.log('jsonized data', data)
     } catch(error) {

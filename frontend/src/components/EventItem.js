@@ -58,8 +58,8 @@ const EventItem = ({classes, eventId, title, price, date, description, token, cr
       <div className="col-md-3">
       {
         token && <section className={classes.eventactions}>
-          {
-            creatorId === userId ? <p className={classes.eventactionparagraph}> You're the creator of this event</p> 
+          { 
+            creatorId === userId ? creatorId!==undefined && <p className={classes.eventactionparagraph}> You're the creator of this event</p> 
             :
             <button className={classes.button} style={{}} onClick={onViewDetails.bind(this, eventId)}>View Details</button>
           }
