@@ -103,7 +103,7 @@ class BookingsComponent extends Component {
         }
       })
       if(res.status !== 200 && res.status !== 201) {
-        throw new Error ('Failed')
+        throw new Error ('Failed, doesnt respond with 200/201')
       }
       const data = await res.json()
       const bookedEvents = data.data.bookings
