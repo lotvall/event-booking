@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Spinner from '../components/Spinner'
 import EventItem from '../components/EventItem'
 import AuthContext from '../context/AuthContext';
+import EventList from '../components/EventList'
 
 
 class BookingsComponent extends Component {
@@ -20,14 +21,17 @@ class BookingsComponent extends Component {
 
     const request = {
       query: ` 
-        mutation {
-          cancelBooking(bookingId: "${bookingId}"){
+        mutation CancelBooking($id : ID!) {
+          cancelBooking(bookingId: $id){
             _id
             title
             date
           }
         }
-      `
+      `,
+      variables: {
+        id: bookingId
+      }
     }
     const token = this.context.token
     
@@ -115,16 +119,21 @@ class BookingsComponent extends Component {
 
   }
   render() {
+
+    let content = <Spinner/>
+
+    if(!this.state.isLoading) {
+      content = (
+          <EventList 
+            bookedEvents = {this.state.bookedEvents} 
+            token={Boolean(this.context.token)}
+            onCancelBooking={this.handleCancelBooking}
+          />
+      )
+    }
     return (
       <>
-      {
-        this.state.isLoading ?
-        <Spinner />
-        :
-        this.state.bookedEvents.map(bookedEvent => {
-          return <EventItem key={bookedEvent._id} token={Boolean(this.context.token)} title={bookedEvent.event.title} price={bookedEvent.event.price} bookingId={bookedEvent._id} onCancelBooking={this.handleCancelBooking}/>
-        })
-      }
+        {content}
       </>
     )
   }
